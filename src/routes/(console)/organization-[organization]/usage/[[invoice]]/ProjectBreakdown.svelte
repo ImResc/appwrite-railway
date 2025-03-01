@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { PageData } from './$types';
+    import { base } from '$app/paths';
     import { Collapsible, CollapsibleItem } from '$lib/components';
     import {
         TableBody,
@@ -13,9 +13,9 @@
     import { abbreviateNumber, formatCurrency, formatNumberWithCommas } from '$lib/helpers/numbers';
     import { humanFileSize } from '$lib/helpers/sizeConvertion';
     import type { OrganizationUsage } from '$lib/sdk/billing';
-    import { base } from '$app/paths';
     import { canSeeProjects } from '$lib/stores/roles';
     import { onMount } from 'svelte';
+    import type { PageData } from './$types';
 
     type Metric =
         | 'users'
@@ -24,7 +24,8 @@
         | 'executions'
         | 'authPhoneTotal'
         | 'databasesReads'
-        | 'databasesWrites';
+        | 'databasesWrites'
+        | 'imageTransformations';
 
     type Estimate = 'authPhoneEstimate';
 
@@ -93,6 +94,7 @@
         }
 
         switch (metric) {
+            case 'imageTransformations':
             case 'authPhoneTotal':
                 return formatNumberWithCommas(value);
             case 'executions':
@@ -105,6 +107,7 @@
     }
 
     onMount(() => {
+        console.log(JSON.stringify(projects, null, 2));
         if (metric === undefined && databaseOperationMetric === undefined) {
             throw new Error(`metric or database operations must be defined`);
         }
